@@ -4,7 +4,7 @@ let fft;
 let input;
 const bands = 256
 let w = 0
-const maxEle = 50
+const maxEle = 20
 let maxLogBin = 0;
 let minLogBin = 9999;
 
@@ -74,7 +74,7 @@ function setupAudioIn(){
 }
 
 function setupDisplay(){
-  w = window.innerWidth / bands
+  w = width / bands
   let binWidth = 86
 
   for (let i=0; i<bands; i++) {
@@ -91,38 +91,38 @@ function setupDisplay(){
     }
   }
   for (let i=0; i<bands; i++) {
-    scaledBins[i]= Math.round(map(logBins[i], minLogBin, maxLogBin, 0, window.innerWidth));
+    scaledBins[i]= Math.round(map(logBins[i], minLogBin, maxLogBin, 0, width));
   }
 }
 
 function renderCamera() {
-
+  const velocity = 50
   wiggle1 = 150 * sin(angle + 0.0001 * millis());
   wiggle2 = 200 * sin(0.5 * angle + 0.0001 * millis());
   angle -= 0.01;
 
   if (presUP) {
-    cameraZ += 20;
+    cameraZ += velocity;
   }
   if (presDOWN) {
-    cameraZ -= 20;
+    cameraZ -= velocity;
   }
   if (presLEFT) {
-    cameraX -= 20;
+    cameraX -= velocity;
   }
   if (presRIGHT) {
-    cameraX += 20;
+    cameraX += velocity;
   }
 
-  let posX = cameraX + wiggle2 + window.innerWidth / 2.0;
-  let posY = 6 * mouseY + wiggle1 - window.innerHeight / 2.0;
-  let posZ = zStart - cameraZ + (window.innerHeight / 2.0) / tan(PI * 30.0 / 180.0);
+  let posX = cameraX + wiggle2 + width / 2;
+  let posY = 6 * mouseY + wiggle1 - height / 2;
+  let posZ = zStart - cameraZ + (height / 2) / tan(PI * 30 / 180);
   let lookX = mouseX * stretch + wiggle2;
-  let lookY = window.innerHeight - 200 + mouseY;
+  let lookY = height - 200 + mouseY;
   let lookZ = 100;
 
   if (presRIGHT) {
-    println("position: " + posX + ", " + posY + ", " + posZ);
+    console.log("position: " + posX + ", " + posY + ", " + posZ);
   }
   
   camera(posX, posY, posZ, lookX, lookY, lookZ, 0, 1, 0);
@@ -134,8 +134,8 @@ function showGridHelper() {
   fill(0, 255, 0);
   stroke(0, 255, 0);
   line(0, 0, 0, 0, 0, 2000);
-  line(0, 0, 0, 0, window.innerHeight, 0);
-  line(0, 0, 0, window.innerWidth, 0, 0);
+  line(0, 0, 0, 0, height, 0);
+  line(0, 0, 0, width, 0, 0);
   pop();
 }
 
@@ -147,9 +147,71 @@ function mouseWheel(event) {
   if (stretch < 1) {
     stretch = 1;
   }
-  console.log("stretch: "+stretch);
 }
 
+function keyPressed() {
+  //CAMERA CONTROLS
+  if (keyCode  == 87) {
+    presUP = true;
+  }
+  if (keyCode  == 83) {
+    presDOWN = true;
+  }
+  if (keyCode  == 68) { 
+    presRIGHT = true;
+  }
+  if (keyCode  == 65) {
+    presLEFT = true;
+  }
+  if (keyCode  == 84) {
+    vScale--;
+    printText("vScale: "+vScale);
+    console.log("vScale: "+vScale);
+  }
+  if (keyCode  == 71) {
+    vScale++;
+    printText("vScale: "+vScale);
+    console.log("vScale: "+vScale);
+  }
+  if (keyCode  == '1') {
+    file.stop();
+    file.removeFromCache();
+    changeSongFile();
+  }
+  if (keyCode  == 38 && smoothing<0.8) {
+    smoothing+= 0.030;
+    printText("smoothing: "+smoothing);
+    console.log("smoothing: "+smoothing);
+  }
+  if (keyCode  == 40 && smoothing>=0.05) {
+    smoothing-=0.030;
+    printText("smoothing: "+smoothing);
+    console.log("smoothing: "+smoothing);
+  }
+}
+function printText(text) {
+  beginShape();
+  textSize(200);
+  fill(255);
+  text(text, 0, height/3);
+  endShape();
+}
+
+function keyReleased() {
+  if (keyCode  == 87) {
+    presUP = false;
+  }
+  if (keyCode  == 83) {
+    presDOWN = false;
+  }
+  if (keyCode  == 68) { 
+    presRIGHT = false;
+  }
+  if (keyCode  == 65) {
+    presLEFT = false;
+  }
+  
+}
 
 
 function readFFT(){
@@ -161,7 +223,7 @@ function readFFT(){
     for (let i = 0; i < clone.length; i++) {
       const amp = clone[i];
       sum[i] += (amp - sum[i]) * smoothing;
-      let y =vScale*10* Math.log(sum[i]/displayHeight);
+      let y =vScale*10* Math.log(sum[i]/height);
       
       cookedClone[i] = y;
     }
@@ -199,7 +261,7 @@ function drawTerrain(mode) {
       }
     }
     if(stretch*scaledBins[row.length-1]>=0){
-      vertex(stretch*scaledBins[row.length-1],displayHeight,z+zPlus);
+      vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
     }
     pop();
     endShape();
