@@ -69,7 +69,7 @@ function setupAudioIn(){
     input.connect()
     input.start()
     input.amp(0.9);
-    // fft.setInput(input);
+    fft.setInput(input);
   }
 }
 
@@ -129,6 +129,28 @@ function renderCamera() {
 
 }
 
+function showGridHelper() {
+  push();
+  fill(0, 255, 0);
+  stroke(0, 255, 0);
+  line(0, 0, 0, 0, 0, 2000);
+  line(0, 0, 0, 0, window.innerHeight, 0);
+  line(0, 0, 0, window.innerWidth, 0, 0);
+  pop();
+}
+
+
+function mouseWheel(event) {
+  const count = event.delta;
+  stretch -= 0.005*count;
+
+  if (stretch < 1) {
+    stretch = 1;
+  }
+  console.log("stretch: "+stretch);
+}
+
+
 
 function readFFT(){
   if (input) {
@@ -152,16 +174,6 @@ function readFFT(){
   if (cookedData.length > maxEle) {
     cookedData = [];
   }
-}
-
-function showGridHelper() {
-  push();
-  fill(0, 255, 0);
-  stroke(0, 255, 0);
-  line(0, 0, 0, 0, 0, 2000);
-  line(0, 0, 0, 0, window.innerHeight, 0);
-  line(0, 0, 0, window.innerWidth, 0, 0);
-  pop();
 }
 
 function drawTerrain(mode) {
