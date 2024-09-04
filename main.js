@@ -21,7 +21,7 @@ let presLEFT=false
 let presRIGHT=false
 
 let smoothing = 0.2
-let vScale = 30
+let vScale =29
 
 let logBins = []
 let scaledBins = []
@@ -35,7 +35,7 @@ function setup() {
   let cnv = createCanvas(displayWidth*0.8, displayHeight*0.8, WEBGL);
   // readSongDir();
 
-  fft = new p5.FFT(0.8,bands);
+  fft = new p5.FFT(0,bands);
   //loadSongFile();
   setupAudioIn();
   setupDisplay();
@@ -190,11 +190,12 @@ function keyPressed() {
     console.log("smoothing: "+smoothing);
   }
 }
-function printText(text) {
+function printText(str) {
   beginShape();
+  textFont('Courier New');
   textSize(200);
   fill(255);
-  text(text, 0, height/3);
+  text(str, 0, height/3);
   endShape();
 }
 
@@ -218,13 +219,13 @@ function keyReleased() {
 function readFFT(){
   if (input) {
     spectrum = fft.analyze();
-    const clone = spectrum
+    const clone = fft.logAverages(fft.getOctaveBands(2*bands))
     let cookedClone = [];
     
-    for (let i = 0; i < clone.length; i++) {
-      const amp = clone[i];
+    for (let i = 0; i <= clone.length; i++) {
+      const amp =clone[i]/255;
       sum[i] += (amp - sum[i]) * smoothing;
-      let y =vScale*10* Math.log(sum[i]/height);
+      let y =vScale*20*Math.log((sum[i])/height);
       
       cookedClone[i] = y;
     }
@@ -257,13 +258,13 @@ function drawTerrain(mode) {
       
       if(stretch*scaledBins[i]>=0){
         // cuando el factor 0*timeFrame (-y*(0*timeFrame)) es demasiado grande, se desplaza casi en vertical y queda bastante guapo
-        vertex(stretch*scaledBins[i], -row[i]+0*timeFrame,z);
-        vertex(stretch*scaledBins[i], -row[i]+8*timeFrame,z+zPlus);
+        vertex(stretch*scaledBins[i], (-4*height)-row[i]+0*timeFrame,z);
+        vertex(stretch*scaledBins[i], (-4*height)-row[i]+8*timeFrame,z+zPlus);
       }
     }
-    // if(stretch*scaledBins[row.length-1]>=0){
-    //   vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
-    // }
+    if(stretch*scaledBins[row.length-1]>=0){
+      vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
+    }
     pop();
     endShape();
     timeFrame++;
