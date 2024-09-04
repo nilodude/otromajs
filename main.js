@@ -247,7 +247,7 @@ function drawTerrain(mode) {
   let zPlus = 100;
   for (const row of cookedData) {
     //eleNum++;
-    beginShape(mode);
+    beginShape(''); // empty string as an argument makes vertex visible alone, without mesh on top
     push();
     for (let i = 0; i < row.length; i++) {
       const red = 255-3*i;
