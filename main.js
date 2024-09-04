@@ -2,7 +2,7 @@ const songDir = "D:/MUSICA/LIBRERIAS/tracklists/anu27";
 let songs = []
 let fft;
 let input;
-const bands = 512
+const bands = 256
 let w = 0
 const maxEle = 50
 let maxLogBin = 0;
@@ -20,7 +20,7 @@ let presLEFT=false
 let presRIGHT=false
 
 let smoothing = 1
-let vScale = 10
+let vScale = 29
 
 let logBins = []
 let scaledBins = []
@@ -31,7 +31,7 @@ let data = []
 let cookedData = []
 
 function setup() {
-  let cnv = createCanvas(window.innerWidth*0.8, window.innerHeight*0.8, WEBGL);
+  let cnv = createCanvas(displayWidth*0.8, displayHeight*0.8, WEBGL);
   // readSongDir();
 
   fft = new p5.FFT(0.8,bands);
@@ -88,7 +88,6 @@ function setupDisplay(){
       if (minLogBin > logBins[i]) {
         minLogBin = logBins[i];
       }
-      // console.log(logBins[i]);
     }
   }
   for (let i=0; i<bands; i++) {
@@ -143,18 +142,16 @@ function readFFT(){
       let y =vScale*10* Math.log(sum[i]/displayHeight);
       
       cookedClone[i] = y;
-      console.log(sum)
     }
     cookedData.unshift(cookedClone);
     data.unshift(clone);
   }
   if (cookedData.length >= maxEle) {
     cookedData.pop();
+  }  
+  if (cookedData.length > maxEle) {
+    cookedData = [];
   }
-  // if (cookedData.length > maxEle) {
-  //   cookedData = [];
-  // }
-  
 }
 
 function showGridHelper() {
@@ -170,7 +167,7 @@ function showGridHelper() {
 function drawTerrain(mode) {
   let z = 0;
   let timeFrame = 0;
-  let zPlus = 50;
+  let zPlus = 150;
   for (const row of cookedData) {
     //eleNum++;
     beginShape(mode);
