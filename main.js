@@ -8,10 +8,11 @@ const maxEle = 20
 let maxLogBin = 0;
 let minLogBin = 9999;
 
-let zStart = 6000
+let zStart = 5700
 let stretch = 3.2
 let angle = 0
-let cameraX = 0
+
+let cameraX = 3500
 let cameraY = 0
 let cameraZ = 0
 let presUP=false
@@ -19,8 +20,8 @@ let presDOWN=false
 let presLEFT=false
 let presRIGHT=false
 
-let smoothing = 1
-let vScale = 29
+let smoothing = 0.2
+let vScale = 30
 
 let logBins = []
 let scaledBins = []
@@ -241,7 +242,7 @@ function readFFT(){
 function drawTerrain(mode) {
   let z = 0;
   let timeFrame = 0;
-  let zPlus = 150;
+  let zPlus = 100;
   for (const row of cookedData) {
     //eleNum++;
     beginShape(mode);
@@ -260,12 +261,12 @@ function drawTerrain(mode) {
         vertex(stretch*scaledBins[i], -row[i]+8*timeFrame,z+zPlus);
       }
     }
-    if(stretch*scaledBins[row.length-1]>=0){
-      vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
-    }
+    // if(stretch*scaledBins[row.length-1]>=0){
+    //   vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
+    // }
     pop();
     endShape();
     timeFrame++;
-    z += 1.5*zPlus;
+    z += 2*zPlus;
   }
 }
