@@ -218,16 +218,16 @@ function keyReleased() {
 
 function readFFT(){
   if (input) {
-    spectrum = fft.analyze();
-    const clone = fft.logAverages(fft.getOctaveBands(2*bands))
+    spectrum = fft.analyze('dB');
+    const clone = spectrum
     let cookedClone = [];
     
     for (let i = 0; i <= clone.length; i++) {
-      const amp =clone[i]/255;
+      const amp = clone[i];
       sum[i] += (amp - sum[i]) * smoothing;
-      let y =vScale*20*Math.log((sum[i])/height);
       
-      cookedClone[i] = y;
+      
+      cookedClone[i] = map(clone[i],-140,0,-height/2, height/2);
     }
     cookedData.unshift(cookedClone);
     data.unshift(clone);
@@ -258,8 +258,8 @@ function drawTerrain(mode) {
       
       if(stretch*scaledBins[i]>=0){
         // cuando el factor 0*timeFrame (-y*(0*timeFrame)) es demasiado grande, se desplaza casi en vertical y queda bastante guapo
-        vertex(stretch*scaledBins[i], (-4*height)-row[i]+0*timeFrame,z);
-        vertex(stretch*scaledBins[i], (-4*height)-row[i]+8*timeFrame,z+zPlus);
+        vertex(stretch*scaledBins[i], (height)-row[i]+0*timeFrame,z);
+        vertex(stretch*scaledBins[i], (height)-row[i]+8*timeFrame,z+zPlus);
       }
     }
     if(stretch*scaledBins[row.length-1]>=0){
