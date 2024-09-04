@@ -179,7 +179,7 @@ function keyPressed() {
     file.removeFromCache();
     changeSongFile();
   }
-  if (keyCode  == 38 && smoothing<0.8) {
+  if (keyCode  == 38 && smoothing<0.97) {
     smoothing+= 0.030;
     printText("smoothing: "+smoothing);
     console.log("smoothing: "+smoothing);
@@ -219,6 +219,7 @@ function keyReleased() {
 function readFFT(){
   if (input) {
     spectrum = fft.analyze('dB');
+    fft.smooth(smoothing)
     const clone = spectrum
     let cookedClone = [];
     
@@ -227,7 +228,7 @@ function readFFT(){
       sum[i] += (amp - sum[i]) * smoothing;
       
       
-      cookedClone[i] = map(clone[i],-140,0,-height/2, height/2);
+      cookedClone[i] = map(clone[i],-140,0,-height, height/2);
     }
     cookedData.unshift(cookedClone);
     data.unshift(clone);
@@ -258,8 +259,8 @@ function drawTerrain(mode) {
       
       if(stretch*scaledBins[i]>=0){
         // cuando el factor 0*timeFrame (-y*(0*timeFrame)) es demasiado grande, se desplaza casi en vertical y queda bastante guapo
-        vertex(stretch*scaledBins[i], (height)-row[i]+0*timeFrame,z);
-        vertex(stretch*scaledBins[i], (height)-row[i]+8*timeFrame,z+zPlus);
+        vertex(stretch*scaledBins[i], (height)-row[i]+2*timeFrame,z);
+        vertex(stretch*scaledBins[i], (height)-row[i]+6*timeFrame,z+zPlus);
       }
     }
     if(stretch*scaledBins[row.length-1]>=0){
