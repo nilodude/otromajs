@@ -2,15 +2,15 @@ let fft;
 let input;
 const bands = 256
 let w = 0
-const maxEle = 25
+const maxEle = 35
 let maxLogBin = 0;
 let minLogBin = 9999;
 
 let zStart = 5700
-let stretch = 3.2
+let stretch = 4.6
 let angle = 0
 
-let cameraX = 3500
+let cameraX = 5000
 let cameraY = 0
 let cameraZ = 0
 let presUP=false
@@ -46,18 +46,18 @@ let songs = ['1-demo01.mp3',
 'betadin the shit']
 
 function setup() {
-  let cnv = createCanvas(displayWidth, displayHeight*0.854, WEBGL);
+  let cnv = createCanvas(displayWidth, displayHeight*0.99, WEBGL);
   fft = new p5.FFT(0,bands);
   
   sourceBtn = createButton('TOGGLE SOURCE')
-  sourceBtn.position(0,0)
+  sourceBtn.position(1,0)
   sourceBtn.value('file')
   sourceBtn.mousePressed(toggleSource);
 
   sourceDiv = createDiv(sourceBtn.value()+'<br>(click to play/stop)')
   sourceDiv.style('color', '#00ff00')
   // sourceDiv.position(40 ,20)
-  sourceDiv.position(0 ,20)
+  sourceDiv.position(1 ,20)
 
   volumeSlider = createSlider(0,1,0.8, 0)
   volumeSlider.position(75 ,70)
@@ -210,7 +210,7 @@ function renderCamera() {
   let posZ = zStart - cameraZ + (height / 2) / tan(PI * 30 / 180);
   let lookX = mouseX * stretch + wiggle2;
   let lookY = height - 200 + mouseY;
-  let lookZ = 100;
+  let lookZ = 2000 - 5 *mouseY + height/2;
 
   if (presRIGHT) {
     // console.log("position: " + posX + ", " + posY + ", " + posZ);
@@ -264,10 +264,9 @@ function keyPressed() {
     printText("vScale: "+vScale);
     console.log("vScale: "+vScale);
   }
-  if (keyCode  == '1') {
-    file.stop();
-    file.removeFromCache();
-    changeSongFile();
+  if (keyCode  == 49 && input instanceof p5.SoundFile) { // press key number "1"
+    input.stop();
+    loadSongFile();
   }
   if (keyCode  == 38 && smoothing<0.97) {
     smoothing+= 0.030;
@@ -285,7 +284,7 @@ function printText(str) {
   beginShape();
   textFont('Courier New');
   textSize(200);
-  stroke(255);
+  // stroke(255);
   text(str, 0, height/3);
   endShape();
 }
@@ -327,9 +326,9 @@ function readFFT(){
   if (cookedData.length >= maxEle) {
     cookedData.pop();
   }  
-  if (cookedData.length > maxEle) {
-    cookedData = [];
-  }
+  // if (cookedData.length > maxEle) {
+  //   cookedData = [];
+  // }
 }
 
 function drawTerrain(mode) {
@@ -350,8 +349,8 @@ function drawTerrain(mode) {
       
       if(stretch*scaledBins[i]>=0){
         // cuando el factor 0*timeFrame (-y*(0*timeFrame)) es demasiado grande, se desplaza casi en vertical y queda bastante guapo
-        vertex(stretch*scaledBins[i], (height)-row[i]+2*timeFrame,z);
-        vertex(stretch*scaledBins[i], (height)-row[i]+6*timeFrame,z+zPlus);
+        vertex(stretch*scaledBins[i], -500+(height)-row[i]+2*timeFrame,z);
+        vertex(stretch*scaledBins[i], -500+(height)-row[i]+6*timeFrame,z+zPlus);
       }
     }
     // if(stretch*scaledBins[row.length-1]>=0){
