@@ -18,7 +18,7 @@ let presDOWN=false
 let presLEFT=false
 let presRIGHT=false
 
-let smoothing = 0.2
+let smoothing = 0.47
 let vScale =29
 
 let logBins = []
@@ -31,17 +31,42 @@ let cookedData = []
 
 let btnSource;
 
+let songs = ['1-demo01.mp3',
+'2-demo01.mp3',
+'3-demo01.mp3',
+'casiohop.mp3',
+'GND.mp3',
+'piezos_colega_rescate_acopure.mp3',
+'sinti.mp3',
+'pruebita11-demo01.mp3',
+'pruebita12-demo01.mp3',
+'redobless.mp3',
+'tartámara.mp3',
+'tranki.mp3',
+'betadin the shit']
+
 function setup() {
-  let cnv = createCanvas(displayWidth, displayHeight*0.85, WEBGL);
+  let cnv = createCanvas(displayWidth, displayHeight*0.854, WEBGL);
   fft = new p5.FFT(0,bands);
   
-  sourceBtn = createButton('SOURCE')
+  sourceBtn = createButton('TOGGLE SOURCE')
   sourceBtn.position(0,0)
   sourceBtn.value('file')
   sourceBtn.mousePressed(toggleSource);
 
-  // volumeSlider = createSlider(0,1,0.8, 0)
-  // volumeSlider.position(100 ,0)
+  sourceDiv = createDiv(sourceBtn.value()+'<br>(click to play/stop)')
+  sourceDiv.style('color', '#00ff00')
+  // sourceDiv.position(40 ,20)
+  sourceDiv.position(0 ,20)
+
+  volumeSlider = createSlider(0,1,0.8, 0)
+  volumeSlider.position(75 ,70)
+
+  volumeDiv = createDiv(volumeSlider.value()*100)
+  volumeDiv.style('color', '#cacaca')
+  volumeDiv.position(120 ,0)
+
+  
 
   loadSongFile();
   
@@ -53,6 +78,8 @@ function draw() {
 
   renderCamera();
   
+  setVolume()
+
   readFFT();
   
   showGridHelper();
@@ -73,11 +100,23 @@ async function toggleSource(){
     sourceBtn.value('mic')
     await setupAudioIn();
   }
+  sourceDiv.html(sourceBtn.value()+'<br>(click to play/stop)')
+}
+
+function setVolume(){
+  volumeDiv.html(int(volumeSlider.value()*100))
+  input.amp(volumeSlider.value())
+}
+
+function randomSong(){
+  return songs[int(random(songs.length-1))]
 }
 
 function loadSongFile() {
   try {
-    input = new p5.SoundFile('songs/melodia-the-mail-troika-1979.mp3');
+    path = 'songs/'+randomSong()
+    console.log(path)
+    input = new p5.SoundFile(path);
     if (input != null) {
       input.amp(1);
       input.connect()
@@ -109,14 +148,18 @@ function gotSources(deviceList){
 
 function mouseClicked(event) {
   if(event.target.localName == 'canvas'){
-    if (input instanceof p5.SoundFile && !input.isPlaying() && input.isLoaded()) {
+    if (input instanceof p5.SoundFile && input.isLoaded()){ 
+     if(!input.isPlaying()){
       input.play();
+     }else{
+      input.pause();
+     }
     } else {
-      if(input instanceof p5.SoundFile){
-        input.pause();
-      }else{
-        input.stop()
-      }
+        if(input.stream){
+          input.stop();
+        }else{
+          input.start()
+        }
     }
   }
   
@@ -144,7 +187,7 @@ function setupDisplay(){
 }
 
 function renderCamera() {
-  const velocity = 50
+  const velocity = 35
   wiggle1 = 150 * sin(angle + 0.0001 * millis());
   wiggle2 = 200 * sin(0.5 * angle + 0.0001 * millis());
   angle -= 0.01;
@@ -242,7 +285,7 @@ function printText(str) {
   beginShape();
   textFont('Courier New');
   textSize(200);
-  fill(255);
+  stroke(255);
   text(str, 0, height/3);
   endShape();
 }

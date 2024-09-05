@@ -1,6 +1,62 @@
+*{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
 button {
     background-color: black;
     border: 1px solid #cacaca;
     color: #cacaca;
     min-width: 5.25rem;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    /* Hides the slider so that custom slider can be made */
+    /* Specific width is required for Firefox. */
+    background: transparent;
+    /* Otherwise white in Chrome */
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+    outline: none;
+    /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-ms-track {
+    cursor: ns-resize;
+
+    /* Hides the slider so custom styles can be added */
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type=range]{
+    background-color: black;
+    border: 1px solid #cacaca;
+    color: #cacaca;
+    cursor: ns-resize;
+    transform: rotate(-90deg);
+}
+
+input[type=range]::-webkit-slider-thumb{
+    background-color: black;
+    border: 1px solid #cacaca;
+    border-radius: 3px;
+}
+
+input[type=range]::-moz-range-thumb{
+    background-color: black;
+    border: 1px solid #cacaca;
+    border-radius: 3px;
+}
+
+input[type=range]::-ms-thumb{
+    background-color: black;
+    border: 1px solid #cacaca;
+    border-radius: 3px;
 }
