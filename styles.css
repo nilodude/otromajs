@@ -1,0 +1,6 @@
+button {
+    background-color: black;
+    border: 1px solid #cacaca;
+    color: #cacaca;
+    min-width: 5.25rem;
+}

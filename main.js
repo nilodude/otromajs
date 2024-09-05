@@ -1,10 +1,8 @@
-const songDir = "D:/MUSICA/LIBRERIAS/tracklists/anu27";
-let songs = []
 let fft;
 let input;
 const bands = 256
 let w = 0
-const maxEle = 20
+const maxEle = 25
 let maxLogBin = 0;
 let minLogBin = 9999;
 
@@ -31,13 +29,22 @@ let sum =Array(bands).fill(0)
 let data = []
 let cookedData = []
 
-function setup() {
-  let cnv = createCanvas(displayWidth*0.8, displayHeight*0.8, WEBGL);
-  // readSongDir();
+let btnSource;
 
+function setup() {
+  let cnv = createCanvas(displayWidth, displayHeight*0.85, WEBGL);
   fft = new p5.FFT(0,bands);
-  //loadSongFile();
-  setupAudioIn();
+  
+  sourceBtn = createButton('SOURCE')
+  sourceBtn.position(0,0)
+  sourceBtn.value('file')
+  sourceBtn.mousePressed(toggleSource);
+
+  // volumeSlider = createSlider(0,1,0.8, 0)
+  // volumeSlider.position(100 ,0)
+
+  loadSongFile();
+  
   setupDisplay();
 }
 
@@ -49,35 +56,75 @@ function draw() {
   readFFT();
   
   showGridHelper();
-  // drawEQ();
-  drawTerrain(TRIANGLE_STRIP)
+  
+  drawTerrain(QUAD_STRIP)
 }
 
-function readSongDir() {
-  let files = new File(songDir).listFiles();
-
-  for (const file in files) {
-    if (!file.isDirectory() && !file.getName().contains("flac")) {
-      console.log(file.getPath())
-      songs.add(file.getPath());
-    }
+async function toggleSource(){
+  if(sourceBtn.value() == 'mic'){
+    input.disconnect()
+    input = undefined
+    sourceBtn.value('file')
+    loadSongFile();
+  }else{
+    input.stop()
+    input.disconnect()
+    input = undefined
+    sourceBtn.value('mic')
+    await setupAudioIn();
   }
 }
 
-function setupAudioIn(){
+function loadSongFile() {
+  try {
+    input = new p5.SoundFile('songs/melodia-the-mail-troika-1979.mp3');
+    if (input != null) {
+      input.amp(1);
+      input.connect()
+      fft.setInput(input);
+    }
+  }
+  catch(e) {
+    console.error(e)
+  }
+}
+
+
+async function setupAudioIn(){
   input = new p5.AudioIn();
   if(input){
-    input.connect()
+    input.getSources(gotSources);
+    // input.connect() //this enables sound output
     input.start()
     input.amp(0.9);
     fft.setInput(input);
   }
 }
 
+function gotSources(deviceList){
+  if (deviceList.length > 0) {
+    console.log(deviceList)
+  }
+}
+
+function mouseClicked(event) {
+  if(event.target.localName == 'canvas'){
+    if (input instanceof p5.SoundFile && !input.isPlaying() && input.isLoaded()) {
+      input.play();
+    } else {
+      if(input instanceof p5.SoundFile){
+        input.pause();
+      }else{
+        input.stop()
+      }
+    }
+  }
+  
+}
+
 function setupDisplay(){
   w = width / bands
-  let binWidth = 86
-
+  let binWidth = 86;
   for (let i=0; i<bands; i++) {
     let temp = (i+1)*binWidth;
     if (temp < 20000) {
@@ -123,7 +170,7 @@ function renderCamera() {
   let lookZ = 100;
 
   if (presRIGHT) {
-    console.log("position: " + posX + ", " + posY + ", " + posZ);
+    // console.log("position: " + posX + ", " + posY + ", " + posZ);
   }
   
   camera(posX, posY, posZ, lookX, lookY, lookZ, 0, 1, 0);
@@ -190,6 +237,7 @@ function keyPressed() {
     console.log("smoothing: "+smoothing);
   }
 }
+
 function printText(str) {
   beginShape();
   textFont('Courier New');
@@ -228,7 +276,7 @@ function readFFT(){
       sum[i] += (amp - sum[i]) * smoothing;
       
       
-      cookedClone[i] = map(clone[i],-140,0,-height, height/2);
+      cookedClone[i] = map(clone[i],-140,0,-2*height, height/2);
     }
     cookedData.unshift(cookedClone);
     data.unshift(clone);
@@ -247,7 +295,7 @@ function drawTerrain(mode) {
   let zPlus = 100;
   for (const row of cookedData) {
     //eleNum++;
-    beginShape(''); // empty string as an argument makes vertex visible alone, without mesh on top
+    beginShape(mode); // empty string as an argument makes vertex visible alone, without mesh on top
     push();
     for (let i = 0; i < row.length; i++) {
       const red = 255-3*i;
@@ -263,9 +311,9 @@ function drawTerrain(mode) {
         vertex(stretch*scaledBins[i], (height)-row[i]+6*timeFrame,z+zPlus);
       }
     }
-    if(stretch*scaledBins[row.length-1]>=0){
-      vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
-    }
+    // if(stretch*scaledBins[row.length-1]>=0){
+    //   vertex(stretch*scaledBins[row.length-1],height,z+zPlus);
+    // }
     pop();
     endShape();
     timeFrame++;
