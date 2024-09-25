@@ -345,6 +345,7 @@ function drawTerrain(mode) {
       const blue = 4*i;
 
       fill(red, greem, blue, /*255-0.1**/255);
+      //el -500 de la linea 353 y 354 deberia estar aqui en el translate
       translate(0, 0, z);
       
       if(stretch*scaledBins[i]>=0){
