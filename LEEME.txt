@@ -1,2 +1,4 @@
+05/09/24:
+    -hay que probar a representarlo todo del tiron en el mismo bucle
 25/09/24:
     -hay que probar a dibujar 1 SOLA VEZ cada espectro, y que sea la cámara la que avanza y crea la ilusion del movimiento, que se conplementa con el WASD

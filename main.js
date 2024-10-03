@@ -31,10 +31,7 @@ let cookedData = []
 
 let btnSource;
 
-let songs = ['1-demo01.mp3',
-'2-demo01.mp3',
-'3-demo01.mp3',
-'casiohop.mp3',
+let songs = ['casiohop.mp3',
 'GND.mp3',
 'piezos_colega_rescate_acopure.mp3',
 'sinti.mp3',
@@ -47,6 +44,7 @@ let songs = ['1-demo01.mp3',
 
 function setup() {
   let cnv = createCanvas(displayWidth, displayHeight*0.99, WEBGL);
+  setAttributes({ antialias: false })
   fft = new p5.FFT(0,bands);
   
   sourceBtn = createButton('TOGGLE SOURCE')
