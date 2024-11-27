@@ -43,7 +43,7 @@ let songs = ['casiohop.mp3',
 'betadin the shit']
 
 async function setup() {
-  let cnv = createCanvas(displayWidth, displayHeight*0.99, WEBGL);
+  let cnv = createCanvas(displayWidth, displayHeight, WEBGL);
   setAttributes({ antialias: false })
   fft = new p5.FFT(0,bands);
   
@@ -63,6 +63,14 @@ async function setup() {
   volumeDiv = createDiv(volumeSlider.value()*100)
   volumeDiv.style('color', '#cacaca')
   volumeDiv.position(120 ,0)
+
+  overlayDiv = document.createElement('div')
+  overlayDiv.appendChild(sourceBtn.elt)
+  overlayDiv.appendChild(sourceDiv.elt)
+  overlayDiv.appendChild(volumeSlider.elt)
+  overlayDiv.appendChild(volumeDiv.elt)
+  overlayDiv.style.display = 'none'
+  document.body.appendChild(overlayDiv)
 
   if(sourceBtn.value() == 'mic'){
     await setupAudioIn();
