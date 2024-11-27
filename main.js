@@ -42,14 +42,14 @@ let songs = ['casiohop.mp3',
 'tranki.mp3',
 'betadin the shit']
 
-function setup() {
+async function setup() {
   let cnv = createCanvas(displayWidth, displayHeight*0.99, WEBGL);
   setAttributes({ antialias: false })
   fft = new p5.FFT(0,bands);
   
   sourceBtn = createButton('TOGGLE SOURCE')
   sourceBtn.position(1,0)
-  sourceBtn.value('file')
+  sourceBtn.value('mic')
   sourceBtn.mousePressed(toggleSource);
 
   sourceDiv = createDiv(sourceBtn.value()+'<br>(click to play/stop)')
@@ -57,16 +57,19 @@ function setup() {
   // sourceDiv.position(40 ,20)
   sourceDiv.position(1 ,20)
 
-  volumeSlider = createSlider(0,1,0.8, 0)
+  volumeSlider = createSlider(0,1,1, 0)
   volumeSlider.position(75 ,70)
 
   volumeDiv = createDiv(volumeSlider.value()*100)
   volumeDiv.style('color', '#cacaca')
   volumeDiv.position(120 ,0)
 
+  if(sourceBtn.value() == 'mic'){
+    await setupAudioIn();
+  }else{
+    loadSongFile();
+  }
   
-
-  loadSongFile();
   
   setupDisplay();
 }
@@ -133,7 +136,7 @@ async function setupAudioIn(){
     input.getSources(gotSources);
     // input.connect() //this enables sound output
     input.start()
-    input.amp(0.9);
+    input.amp(1);
     fft.setInput(input);
   }
 }
@@ -144,24 +147,24 @@ function gotSources(deviceList){
   }
 }
 
-function mouseClicked(event) {
-  if(event.target.localName == 'canvas'){
-    if (input instanceof p5.SoundFile && input.isLoaded()){ 
-     if(!input.isPlaying()){
-      input.play();
-     }else{
-      input.pause();
-     }
-    } else {
-        if(input.stream){
-          input.stop();
-        }else{
-          input.start()
-        }
-    }
-  }
+// function mouseClicked(event) {
+//   if(event.target.localName == 'canvas'){
+//     if (input instanceof p5.SoundFile && input.isLoaded()){ 
+//      if(!input.isPlaying()){
+//       input.play();
+//      }else{
+//       input.pause();
+//      }
+//     } else {
+//         if(input.stream){
+//           input.stop();
+//         }else{
+//           input.start()
+//         }
+//     }
+//   }
   
-}
+// }
 
 function setupDisplay(){
   w = width / bands
@@ -252,12 +255,12 @@ function keyPressed() {
   if (keyCode  == 65) {
     presLEFT = true;
   }
-  if (keyCode  == 84) {
+  if (keyCode  == 84) { // T & G
     vScale--;
     printText("vScale: "+vScale);
     console.log("vScale: "+vScale);
   }
-  if (keyCode  == 71) {
+  if (keyCode  == 71) { // T & G
     vScale++;
     printText("vScale: "+vScale);
     console.log("vScale: "+vScale);
@@ -266,15 +269,31 @@ function keyPressed() {
     input.stop();
     loadSongFile();
   }
-  if (keyCode  == 38 && smoothing<0.97) {
+  if (keyCode  == 38 && smoothing < 0.97) { //flechas
     smoothing+= 0.030;
     printText("smoothing: "+smoothing);
     console.log("smoothing: "+smoothing);
   }
-  if (keyCode  == 40 && smoothing>=0.05) {
+  if (keyCode  == 40 && smoothing >= 0.05) {
     smoothing-=0.030;
     printText("smoothing: "+smoothing);
     console.log("smoothing: "+smoothing);
+  }
+
+  if(keyCode == 32){
+    if (input instanceof p5.SoundFile && input.isLoaded()){ 
+      if(!input.isPlaying()){
+       input.play();
+      }else{
+       input.pause();
+      }
+     } else {
+         if(input.stream){
+           input.stop();
+         }else{
+           input.start()
+         }
+     }
   }
 }
 
