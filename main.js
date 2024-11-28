@@ -376,15 +376,16 @@ function drawTerrain(mode) {
   let z = 0;
   let timeFrame = 0;
   let zPlus = 100;
+  let milis = millis()
   for (const row of cookedData) {
     //eleNum++;
     beginShape(mode); // empty string as an argument makes vertex visible alone, without mesh on top
     push();
     for (let i = 0; i < row.length; i++) {
       
-      const red = 255-3*i;
-      const greem = 190-8*i;
-      const blue = 4*i;
+      const red = 225- 3*i+150 * sin(0.0001 * milis);
+      const greem = 225-8*i+120 * sin(0.00015 * milis);;
+      const blue = 4*i+110 * sin(0.0003 * milis);;
 
       fill(red, greem, blue, /*255-0.1**/255);
       //el -500 de la linea 353 y 354 deberia estar aqui en el translate
