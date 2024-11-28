@@ -383,9 +383,9 @@ function drawTerrain(mode) {
     push();
     for (let i = 0; i < row.length; i++) {
       
-      const red = 225- 3*i+150 * sin(0.0001 * milis);
-      const greem = 225-8*i+120 * sin(0.00015 * milis);;
-      const blue = 4*i+110 * sin(0.0003 * milis);;
+      const red = 205- 3*i-sin(0.0002 * milis);
+      const greem = 225-8*i-120 * sin(0.0001 * milis);;
+      const blue = 4*i- sin(0.0003 * milis);
 
       fill(red, greem, blue, /*255-0.1**/255);
       //el -500 de la linea 353 y 354 deberia estar aqui en el translate
