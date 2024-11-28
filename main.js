@@ -7,16 +7,23 @@ let maxLogBin = 0;
 let minLogBin = 9999;
 
 let zStart = 5700
-let stretch = 4.6
+let stretch = 5
 let angle = 0
 
 let cameraX = 5000
 let cameraY = 0
 let cameraZ = 0
+
+let prevPY = 0
+let prevLX = 0
+let prevLY = 0
+let prevLZ = 0
+
 let presUP=false
 let presDOWN=false
 let presLEFT=false
 let presRIGHT=false
+let freezeCamera=true
 
 let smoothing = 0.47
 let vScale =29
@@ -213,20 +220,24 @@ function renderCamera() {
   if (presRIGHT) {
     cameraX += velocity;
   }
+  
 
   let posX = cameraX + wiggle2 + width / 2;
-  let posY = 6 * mouseY + wiggle1 - height / 2;
+  let posY = freezeCamera ? prevPY : (6 * mouseY + wiggle1 - height / 2);
   let posZ = zStart - cameraZ + (height / 2) / tan(PI * 30 / 180);
-  let lookX = mouseX * stretch + wiggle2;
-  let lookY = height - 200 + mouseY;
-  let lookZ = 2000 - 5 *mouseY + height/2;
+  let lookX =freezeCamera ? prevLX :  (mouseX * stretch + wiggle2);
+  let lookY = freezeCamera ? prevLY :  (height - 200 + mouseY);
+  let lookZ = freezeCamera ? prevLZ :  (2000 - 5 *mouseY + height/2);
 
   if (presRIGHT) {
     // console.log("position: " + posX + ", " + posY + ", " + posZ);
   }
   
   camera(posX, posY, posZ, lookX, lookY, lookZ, 0, 1, 0);
-
+  prevPY = posY
+  prevLX = lookX
+  prevLY = lookY
+  prevLZ = lookZ
 }
 
 function showGridHelper() {
@@ -243,10 +254,10 @@ function showGridHelper() {
 function mouseWheel(event) {
   const count = event.delta;
   stretch -= 0.005*count;
-
   if (stretch < 1) {
     stretch = 1;
   }
+  console.log(stretch)
 }
 
 function keyPressed() {
@@ -263,6 +274,9 @@ function keyPressed() {
   if (keyCode  == 65) {
     presLEFT = true;
   }
+  if(keyCode == 67){ // ctrl
+    freezeCamera = false
+  }
   if (keyCode  == 84) { // T & G
     vScale--;
     printText("vScale: "+vScale);
@@ -273,11 +287,11 @@ function keyPressed() {
     printText("vScale: "+vScale);
     console.log("vScale: "+vScale);
   }
-  if (keyCode  == 49 && input instanceof p5.SoundFile) { // press key number "1"
+  if (keyCode  == 49 && input instanceof p5.SoundFile) { // number "1"
     input.stop();
     loadSongFile();
   }
-  if (keyCode  == 38 && smoothing < 0.97) { //flechas
+  if (keyCode  == 38 && smoothing < 0.97) { // arrows
     smoothing+= 0.030;
     printText("smoothing: "+smoothing);
     console.log("smoothing: "+smoothing);
@@ -288,7 +302,7 @@ function keyPressed() {
     console.log("smoothing: "+smoothing);
   }
 
-  if(keyCode == 32){
+  if(keyCode == 32){ //spacebar
     if (input instanceof p5.SoundFile && input.isLoaded()){ 
       if(!input.isPlaying()){
        input.play();
@@ -327,7 +341,9 @@ function keyReleased() {
   if (keyCode  == 65) {
     presLEFT = false;
   }
-  
+  if(keyCode == 67){
+    freezeCamera = true
+  }
 }
 
 
@@ -365,6 +381,7 @@ function drawTerrain(mode) {
     beginShape(mode); // empty string as an argument makes vertex visible alone, without mesh on top
     push();
     for (let i = 0; i < row.length; i++) {
+      
       const red = 255-3*i;
       const greem = 190-8*i;
       const blue = 4*i;
