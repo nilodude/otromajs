@@ -7,17 +7,17 @@ let maxLogBin = 0;
 let minLogBin = 9999;
 
 let zStart = 5700
-let stretch = 5
+let stretch = 6
 let angle = 0
 
-let cameraX = 5000
-let cameraY = 0
-let cameraZ = 0
+let cameraX = 4500
+let cameraY = 500
+let cameraZ = -2400
 
-let prevPY = 0
-let prevLX = 0
-let prevLY = 0
-let prevLZ = 0
+let prevPY = -500
+let prevLX = 5500
+let prevLY = 400
+let prevLZ = 5000
 
 let presUP=false
 let presDOWN=false
@@ -148,7 +148,8 @@ function loadSongFile() {
 async function setupAudioIn(){
   input = new p5.AudioIn();
   if(input){
-    input.getSources(gotSources);
+    await listInputs()
+    await input.getSources(gotSources, errorSources);
     // input.connect() //this enables sound output
     input.start()
     input.amp(1);
@@ -156,12 +157,36 @@ async function setupAudioIn(){
   }
 }
 
-function gotSources(deviceList){
-  if (deviceList.length > 0) {
-    console.log(deviceList)
+async function listInputs(){
+  if (!navigator.mediaDevices?.enumerateDevices) {
+    console.log("enumerateDevices() not supported.");
+  } else {
+    // List cameras and microphones.
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then((devices) => {
+        devices.forEach((device) => {
+          console.log(device.toJSON());
+        });
+      })
+      .catch((err) => {
+        console.error(`${err.name}: ${err.message}`);
+      });
   }
+  
 }
 
+async function gotSources(deviceList){
+  // if (deviceList.length > 0) {
+    console.log(deviceList)
+    input.setSource(0)
+    console.log(input.currentSource)
+  // }
+}
+function errorSources(error){
+  console.error(error)
+
+}
 // function mouseClicked(event) {
 //   if(event.target.localName == 'canvas'){
 //     if (input instanceof p5.SoundFile && input.isLoaded()){ 
@@ -225,7 +250,7 @@ function renderCamera() {
   let posX = cameraX + wiggle2 + width / 2;
   let posY = freezeCamera ? prevPY : (6 * mouseY + wiggle1 - height / 2);
   let posZ = zStart - cameraZ + (height / 2) / tan(PI * 30 / 180);
-  let lookX =freezeCamera ? prevLX :  (mouseX * stretch + wiggle2);
+  let lookX = freezeCamera ? prevLX :  (mouseX * stretch + wiggle2);
   let lookY = freezeCamera ? prevLY :  (height - 200 + mouseY);
   let lookZ = freezeCamera ? prevLZ :  (2000 - 5 *mouseY + height/2);
 
