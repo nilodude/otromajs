@@ -10,12 +10,12 @@ let zStart = 5700
 let stretch = 6
 let angle = 0
 
-let cameraX = 4500
+let cameraX = 5100
 let cameraY = 500
-let cameraZ = -2400
+let cameraZ = -2200
 
 let prevPY = -500
-let prevLX = 5500
+let prevLX = 5800
 let prevLY = 400
 let prevLZ = 5000
 
@@ -148,7 +148,7 @@ function loadSongFile() {
 async function setupAudioIn(){
   input = new p5.AudioIn();
   if(input){
-    await listInputs()
+    // await listInputs()
     await input.getSources(gotSources, errorSources);
     // input.connect() //this enables sound output
     input.start()
@@ -299,7 +299,7 @@ function keyPressed() {
   if (keyCode  == 65) {
     presLEFT = true;
   }
-  if(keyCode == 67){ // ctrl
+  if(keyCode == 67 || (presUP||presDOWN||presLEFT||presRIGHT)){ // C
     freezeCamera = false
   }
   if (keyCode  == 84) { // T & G
@@ -345,12 +345,13 @@ function keyPressed() {
 }
 
 function printText(str) {
-  beginShape();
-  textFont('Courier New');
-  textSize(200);
-  // stroke(255);
-  text(str, 0, height/3);
-  endShape();
+  // beginShape();
+  // loadFont('Courier New');
+  // textFont('Courier New')
+  // textSize(200);
+  // // stroke(255);
+  // text(str, 0, height/3);
+  // endShape();
 }
 
 function keyReleased() {
@@ -366,7 +367,7 @@ function keyReleased() {
   if (keyCode  == 65) {
     presLEFT = false;
   }
-  if(keyCode == 67){
+  if(keyCode == 67 || (!presUP&&!presDOWN&&!presLEFT&&!presRIGHT)){
     freezeCamera = true
   }
 }
