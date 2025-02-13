@@ -7,15 +7,15 @@ let maxLogBin = 0;
 let minLogBin = 9999;
 
 let zStart = 5700
-let stretch = 6
+let stretch = 5
 let angle = 0
 
-let cameraX = 5100
+let cameraX = 100
 let cameraY = 500
 let cameraZ = -2200
 
 let prevPY = -500
-let prevLX = 5800
+let prevLX = 100
 let prevLY = 400
 let prevLZ = 5000
 
@@ -53,7 +53,9 @@ async function setup() {
   let cnv = createCanvas(displayWidth, displayHeight, WEBGL);
   setAttributes({ antialias: false })
   fft = new p5.FFT(0,bands);
-  
+  cameraX = displayWidth*2.2
+  prevLX = displayWidth*2.7
+  prevLY= displayHeight
   sourceBtn = createButton('TOGGLE SOURCE')
   sourceBtn.position(1,0)
   sourceBtn.value('mic')
@@ -252,7 +254,7 @@ function renderCamera() {
   let posZ = zStart - cameraZ + (height / 2) / tan(PI * 30 / 180);
   let lookX = freezeCamera ? prevLX :  (mouseX * stretch + wiggle2);
   let lookY = freezeCamera ? prevLY :  (height - 200 + mouseY);
-  let lookZ = freezeCamera ? prevLZ :  (2000 - 5 *mouseY + height/2);
+  let lookZ = freezeCamera ? prevLZ :  (5000 - 5 *mouseY + height/2);
 
   if (presRIGHT) {
     // console.log("position: " + posX + ", " + posY + ", " + posZ);
